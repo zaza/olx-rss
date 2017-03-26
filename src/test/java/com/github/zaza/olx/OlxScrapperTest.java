@@ -1,8 +1,11 @@
 package com.github.zaza.olx;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -10,11 +13,7 @@ public class OlxScrapperTest {
 
 	@Test
 	public void hasOffers() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("kierowce przyjme").toUrl());
-		assertTrue(scrapper.hasOffers());
-		assertTrue(scrapper.getOffersCount() > 0);
-		assertEquals(scrapper.getOffersCount(), scrapper.getOffers().size());
+		assertHasOffers("kierowce przyjme");
 	}
 
 	@Test
@@ -28,10 +27,14 @@ public class OlxScrapperTest {
 
 	@Test
 	public void offersInSingleCategory() throws Exception {
+		assertHasOffers("czarny proch");
+	}
+	
+	private void assertHasOffers(String query) throws IOException {
 		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("czarny proch").toUrl());
+				OlxQueryBuilder.query(query).toUrl());
 		assertTrue(scrapper.hasOffers());
-		assertTrue(scrapper.getOffersCount() > 0);
+		assertThat(scrapper.getOffersCount()).isGreaterThan(0);
 		assertEquals(scrapper.getOffersCount(), scrapper.getOffers().size());
 	}
 

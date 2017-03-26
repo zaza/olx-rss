@@ -20,6 +20,7 @@ public class OlxOfferTest {
 	@Rule
 	public TestName testName = new TestName();
 
+	@Offline
 	@Test
 	public void jobOffer() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
@@ -34,6 +35,7 @@ public class OlxOfferTest {
 		assertNull(offer.getPhoto());
 	}
 	
+	@Offline
 	@Test
 	public void jobOfferWithPhoto() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
