@@ -29,11 +29,11 @@ public class OlxOffer {
 		return getCell(1, 0).select("p").first().text();
 	}
 
-	public String getPhoto() {
+	public URI getPhoto() {
 		Elements images = getCell(0, 0).select("img");
 		if (images.isEmpty())
 			return null;
-		return images.first().attr("src");
+		return URI.create(images.first().attr("src"));
 	}
 
 	Element getCell(int row, int column) {

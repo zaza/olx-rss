@@ -37,7 +37,9 @@ public class OlxScrapper {
 			return 0;
 		Elements spans = getDocument()
 				.select("div#topLink > div > ul > li.hidden > span");
-		return spans.stream().mapToInt(s -> Integer.parseInt(s.text())).sum();
+		return spans.stream()
+				.mapToInt(s -> Integer.parseInt(s.text().replaceAll(" ", "")))
+				.sum();
 	}
 
 	public List<OlxOffer> getOffers() throws IOException {

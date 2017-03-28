@@ -30,6 +30,14 @@ public class OlxScrapperTest {
 		assertHasOffers("czarny proch");
 	}
 	
+	@Test
+	public void emptyQueryReturnsAllOffers() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(
+				OlxQueryBuilder.query("").toUrl());
+		assertTrue(scrapper.hasOffers());
+		assertThat(scrapper.getOffersCount()).isGreaterThan(1000000);
+	}
+
 	private void assertHasOffers(String query) throws IOException {
 		OlxScrapper scrapper = new OlxScrapper(
 				OlxQueryBuilder.query(query).toUrl());

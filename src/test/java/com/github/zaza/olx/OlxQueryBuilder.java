@@ -20,8 +20,14 @@ public class OlxQueryBuilder {
 
 	URL toUrl() throws MalformedURLException {
 		return URI.create(
-				format("https://www.olx.pl/oferty/q-%s/", getEncodedQuery()))
+				format("https://www.olx.pl/oferty/%s", getQuery()))
 				.toURL();
+	}
+
+	private String getQuery() {
+		if (query == null || query.isEmpty())
+			return "";
+		return format("q-%s/", getEncodedQuery());
 	}
 
 	private String getEncodedQuery() {
