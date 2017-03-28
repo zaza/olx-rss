@@ -1,0 +1,6 @@
+{
+  "name": "OLX RSS",
+  "description": "An RSS feed for OLX search results",
+  "image": "heroku/java",
+  "addons": [ ]
+}
