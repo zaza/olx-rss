@@ -34,4 +34,9 @@ public class OlxQueryBuilder {
 		return query.replace(' ', '-');
 	}
 
+	public String getDescription() {
+		// TODO Auto-generated method stub
+		return query;
+	}
+
 }
