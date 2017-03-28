@@ -43,12 +43,15 @@ public class OlxScrapper {
 	}
 
 	public List<OlxOffer> getOffers() throws IOException {
-		if (!hasOffers())
+		if (!hasOffers()) {
 			// offers listed are not related to the query
+			System.out.println("Found no related offers.");
 			return Collections.emptyList();
+		}
 		Elements elements = new Elements(getOffersCount());
 		elements.addAll(getOfferElements());
 		while (hasNextPage()) {
+			System.out.println("Processing next page...");
 			url = getNextPageUrl();
 			document = null;
 			elements.addAll(getOfferElements());

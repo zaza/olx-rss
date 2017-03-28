@@ -7,6 +7,9 @@ import com.github.zaza.olx.OlxClient;
 
 public class OlxRss {
 
+	private OlxRss() {
+	}
+
 	public static void main(String[] args) {
 		port(Integer.valueOf(System.getenv("PORT")));
 		get("/rss", (req, res) -> new FeedWriter()
