@@ -64,7 +64,7 @@ public class OlxOfferTest {
 
 		assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
 		assertThat(offer.getTitle()).containsIgnoringCase("opla");
-		assertThat(offer.getPrice()).matches("\\d+ zł (Do negocjacji)?");
+		assertThat(offer.getPrice()).matches("[ \\d]+ zł (Do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
 		assertThat(offer.getPhoto()).isNotNull();
