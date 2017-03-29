@@ -58,13 +58,14 @@ public class FeedWriter {
 		description.setType("text/html");
 		StringBuilder sb = new StringBuilder();
 		sb.append(format("Cena: %s<br />", item.getPrice()));
+		sb.append(format("Lokalizacja: %s<br />", item.getCity()));
 		sb.append(formatPhoto(item.getPhoto()));
 		description.setValue(sb.toString());
 		return description;
 	}
 
 	private String formatPhoto(URI photo) {
-		return photo != null ? asImg(photo):"";
+		return photo != null ? asImg(photo) : "";
 	}
 	
 	private String asImg(URI photo) {
