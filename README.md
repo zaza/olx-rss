@@ -7,4 +7,6 @@
 An RSS feed for OLX search results.
 
 Examples:
-* [sprzedam opla](http://olx-rss.herokuapp.com/rss?string=sprzedam opla)
+* [sprzedam opla](http://olx-rss.herokuapp.com/rss?string=sprzedam%20opla)
+
+Go [here](https://github.com/zaza/olx-rss/issues) for open issues and upcoming features.
