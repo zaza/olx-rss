@@ -54,6 +54,25 @@ public class OlxOfferTest {
 						"https://olxpl-ring05.akamaized.net/images_tablicapl/509502740_1_261x203_przyjme-kierowce-na-busa-miedzynarodowka-zabrze.jpg"),
 				offer.getPhoto());
 	}
+	
+	@Offline
+	@Test
+	public void offerNegotiablePrice() throws Exception {
+		OlxOffer offer = new OlxOffer(getElement());
+
+		assertEquals("Sprzedam Opla Omegę Lpg",
+				offer.getTitle());
+		assertEquals("5 500 zł Do negocjacji", offer.getPrice());
+		assertEquals(
+				URI.create(
+						"https://www.olx.pl/oferta/sprzedam-opla-omege-lpg-CID5-IDl7NDy.html#d3b98b0b80"),
+				offer.getUri());
+		assertEquals("Garcz", offer.getCity());
+		assertEquals(
+				URI.create(
+						"https://olxpl-ring09.akamaized.net/images_tablicapl/508204936_1_261x203_sprzedam-opla-omege-lpg-kartuzy_rev001.jpg"),
+				offer.getPhoto());
+	}
 
 	@Test
 	public void offerWithPhoto() throws Exception {
@@ -64,7 +83,7 @@ public class OlxOfferTest {
 
 		assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
 		assertThat(offer.getTitle()).containsIgnoringCase("opla");
-		assertThat(offer.getPrice()).matches("[ \\d]+ zł (Do negocjacji)?");
+		assertThat(offer.getPrice()).matches("[ \\d]+ zł( Do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
 		assertThat(offer.getPhoto()).isNotNull();
