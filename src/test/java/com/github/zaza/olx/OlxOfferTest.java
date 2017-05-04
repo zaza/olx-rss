@@ -8,7 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.util.List;
 
+import org.assertj.core.api.Condition;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
@@ -77,7 +79,7 @@ public class OlxOfferTest {
 	@Test
 	public void offerWithPhoto() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("sprzedam opla").toUrl());
+				OlxQueryBuilder.query("sprzedam opla").withPhotoOnly().toUrl());
 
 		OlxOffer offer = scrapper.getOffers().iterator().next();
 
@@ -86,7 +88,18 @@ public class OlxOfferTest {
 		assertThat(offer.getPrice()).matches("[ \\d]+ zł( Do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
+		assertThat(offer.hasPhoto()).isTrue();
 		assertThat(offer.getPhoto()).isNotNull();
+	}
+	
+	@Test
+	public void offerWithNoPhoto() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(
+				OlxQueryBuilder.query("sprzedam opla").toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).areAtLeastOne(hasNoPhoto());
 	}
 
 	private Element getElement() throws IOException {
@@ -98,5 +111,9 @@ public class OlxOfferTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource(name).getFile());
 		return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+	}
+	
+	private Condition<OlxOffer> hasNoPhoto() {
+		return new Condition<OlxOffer>((o) -> !o.hasPhoto(), "has no photo");
 	}
 }

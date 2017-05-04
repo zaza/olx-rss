@@ -9,6 +9,7 @@ import java.net.URL;
 public class OlxQueryBuilder {
 
 	private String query;
+	private boolean withPhotoOnly;
 
 	private OlxQueryBuilder(String query) {
 		this.query = query;
@@ -18,25 +19,32 @@ public class OlxQueryBuilder {
 		return new OlxQueryBuilder(query);
 	}
 
+	OlxQueryBuilder withPhotoOnly() {
+		this.withPhotoOnly = true;
+		return this;
+	}
+
 	URL toUrl() throws MalformedURLException {
-		return URI.create(
-				format("https://www.olx.pl/oferty/%s", getQuery()))
+		return URI.create(format("https://www.olx.pl/oferty/%s", getQuery()))
 				.toURL();
 	}
 
 	private String getQuery() {
 		if (query == null || query.isEmpty())
 			return "";
-		return format("q-%s/", getEncodedQuery());
+		return format("q-%s/%s", getEncodedQuery(), getOptions());
 	}
 
 	private String getEncodedQuery() {
 		return query.replace(' ', '-');
 	}
 
+	private String getOptions() {
+		return withPhotoOnly ? "?search[photos]" : "";
+	}
+
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return query;
+		return format("'%s'%s", query, withPhotoOnly ? " with photo" : "");
 	}
 
 }

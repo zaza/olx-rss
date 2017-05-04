@@ -36,6 +36,10 @@ public class OlxOffer {
 		return URI.create(images.first().attr("src"));
 	}
 
+	public boolean hasPhoto() {
+		return getPhoto() != null;
+	}
+
 	Element getCell(int row, int column) {
 		Element table = element.select("table").first();
 		Element tr = table.select("tbody > tr").get(row);
