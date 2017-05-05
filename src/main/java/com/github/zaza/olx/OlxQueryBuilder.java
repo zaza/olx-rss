@@ -40,7 +40,7 @@ public class OlxQueryBuilder {
 	}
 
 	private String getOptions() {
-		return withPhotoOnly ? "?search[photos]" : "";
+		return withPhotoOnly ? "?search[photos]=1" : "";
 	}
 
 	public String getDescription() {
