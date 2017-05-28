@@ -102,6 +102,28 @@ public class OlxOfferTest {
 		assertThat(offers).areAtLeastOne(hasNoPhoto());
 	}
 
+	@Test
+	public void noOfferInLocation() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(
+				OlxQueryBuilder.query("kamienica").location("Kurozwęcz").toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isEmpty();
+	}
+
+	@Test
+	public void offerInLocation() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(
+				OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isNotEmpty();
+		// FIXME: returns offers in increased radius too
+		//assertThat(offers).allMatch(o -> o.getCity().equals("Koszalin"));
+	}
+
 	private Element getElement() throws IOException {
 		String tag = readFile(testName.getMethodName() + ".htm");
 		return Jsoup.parse(tag, "", Parser.xmlParser());

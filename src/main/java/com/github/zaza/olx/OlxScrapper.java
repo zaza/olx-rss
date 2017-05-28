@@ -1,5 +1,7 @@
 package com.github.zaza.olx;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -29,7 +31,8 @@ public class OlxScrapper {
 	}
 
 	public boolean hasOffers() throws IOException {
-		return !getDocument().select("div#topLink").isEmpty();
+		Elements elements = getDocument().select("div#topLink");
+		return !elements.isEmpty() && elements.first().hasText();
 	}
 
 	public int getOffersCount() throws IOException {
@@ -57,8 +60,7 @@ public class OlxScrapper {
 			elements.addAll(getOfferElements());
 			page++;
 		}
-		return elements.stream().map(OlxOffer::new)
-				.collect(Collectors.toList());
+		return elements.stream().map(OlxOffer::new).collect(toList());
 	}
 
 	private Elements getOfferElements() throws IOException {
@@ -82,6 +84,7 @@ public class OlxScrapper {
 
 	private Document getDocument() throws IOException {
 		if (document == null)
+			System.out.println(url);
 			document = Jsoup.parse(url, FIVE_SECONDS);
 		return document;
 	}
