@@ -58,7 +58,7 @@ public class OlxQueryBuilder {
 		}
 		sb.append("/oferty");
 		if (query != null && !query.isEmpty())
-			sb.append("/q-").append(getEncodedQuery());
+			sb.append("/q-").append(getEncodedQuery()).append("/");
 		return sb.toString();
 	}
 

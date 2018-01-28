@@ -88,7 +88,7 @@ public class OlxOfferTest {
 		assertThat(offer.getPrice()).matches("[ \\d]+ zł( Do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
-		assertThat(offer.hasPhoto()).isTrue();
+		assertThat(offer.hasPhoto()).as("offer %s has no photo", offer.getUri()).isTrue();
 		assertThat(offer.getPhoto()).isNotNull();
 	}
 	
