@@ -28,7 +28,7 @@ public class OlxOffer {
 	}
 
 	public String getCity() {
-		return getCell(1, 0).select("p").first().text();
+		return getCell(1, 0).select("p > small").first().text();
 	}
 
 	public URI getPhoto() {

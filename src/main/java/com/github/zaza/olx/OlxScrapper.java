@@ -51,7 +51,13 @@ public class OlxScrapper {
 			return Collections.emptyList();
 		}
 		Elements elements = new Elements(getOffersCount());
-		elements.addAll(getOfferElements());
+		if (!hasNextPage()) {
+			// if this is the only page with results, limit them to those matching the query
+			// other results from the page are suggestions e.g. with larger location radius
+			elements.addAll(getOfferElements().subList(0, getOffersCount()));
+		} else {
+			elements.addAll(getOfferElements());
+		}
 		while (hasNextPage()) {
 			System.out.println("Processing next page...");
 			url = getNextPageUrl();

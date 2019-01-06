@@ -120,8 +120,8 @@ public class OlxOfferTest {
 		List<OlxOffer> offers = scrapper.getOffers();
 
 		assertThat(offers).isNotEmpty();
-		// FIXME: returns offers in increased radius too
-		//assertThat(offers).allMatch(o -> o.getCity().equals("Koszalin"));
+		assertThat(offers.size()).isEqualTo(scrapper.getOffersCount());
+		assertThat(offers).allMatch(o -> o.getCity().equals("Koszalin"));
 	}
 
 	private Element getElement() throws IOException {
