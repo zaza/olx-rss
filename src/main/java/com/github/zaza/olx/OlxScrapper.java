@@ -64,7 +64,7 @@ public class OlxScrapper {
 
 	private Elements getOfferElements() throws IOException {
 		return getDocument()
-				.select("table#offers_table > tbody > tr > td.offer > table");
+				.select("table#offers_table > tbody > tr > td > div > table");
 	}
 
 	private boolean hasNextPage() throws IOException {
