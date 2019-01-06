@@ -1,7 +1,7 @@
 package com.github.zaza;
 
 import static spark.Spark.get;
-import static spark.SparkBase.port;
+import static spark.Spark.port;
 
 import com.github.zaza.olx.OlxClient;
 
