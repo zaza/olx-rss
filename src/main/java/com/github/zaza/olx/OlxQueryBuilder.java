@@ -1,5 +1,6 @@
 package com.github.zaza.olx;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
 import java.net.MalformedURLException;
@@ -35,6 +36,7 @@ public class OlxQueryBuilder {
 	}
 
 	OlxQueryBuilder radius(Radius radius) {
+		checkState(location!= null, "Location must be provided first.");
 		this.radius = radius;
 		return this;
 	}
@@ -56,7 +58,9 @@ public class OlxQueryBuilder {
 		if (location != null) {
 			sb.append("/").append(deaccent(location));
 		}
-		sb.append("/oferty");
+		if (radius == null) {
+			sb.append("/oferty");
+		}
 		if (query != null && !query.isEmpty())
 			sb.append("/q-").append(getEncodedQuery()).append("/");
 		return sb.toString();

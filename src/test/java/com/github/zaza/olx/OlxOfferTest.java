@@ -124,6 +124,23 @@ public class OlxOfferTest {
 		assertThat(offers).allMatch(o -> o.getCity().equals("Koszalin"));
 	}
 
+	@Test
+	public void offerInRadius() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(
+				OlxQueryBuilder.query("nowy dom").location("Koszalin").radius(Radius._30KM).toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isNotEmpty();
+		assertThat(offers.size()).isEqualTo(scrapper.getOffersCount());
+		assertThat(offers).areAtLeastOne(new Condition<OlxOffer>(o -> !o.getCity().equals("Koszalin"), "city is not %s", "Koszalin"));
+		
+		List<OlxOffer> offersInKoszalinOnly = new OlxScrapper(
+				OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl()).getOffers();
+		assertThat(offers.size()).isGreaterThan(offersInKoszalinOnly.size());
+		assertThat(offers).containsAll(offersInKoszalinOnly);
+	}
+
 	private Element getElement() throws IOException {
 		String tag = readFile(testName.getMethodName() + ".htm");
 		return Jsoup.parse(tag, "", Parser.xmlParser());

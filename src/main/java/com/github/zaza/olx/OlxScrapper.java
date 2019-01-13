@@ -90,7 +90,7 @@ public class OlxScrapper {
 	private Document getDocument() throws IOException {
 		if (document == null)
 			System.out.println(url);
-			document = Jsoup.parse(url, FIVE_SECONDS);
+		document = Jsoup.parse(url, FIVE_SECONDS);
 		return document;
 	}
 
