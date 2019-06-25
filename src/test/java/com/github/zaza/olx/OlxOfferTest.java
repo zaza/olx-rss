@@ -56,7 +56,7 @@ public class OlxOfferTest {
 						"https://olxpl-ring05.akamaized.net/images_tablicapl/509502740_1_261x203_przyjme-kierowce-na-busa-miedzynarodowka-zabrze.jpg"),
 				offer.getPhoto());
 	}
-	
+
 	@Offline
 	@Test
 	public void offerNegotiablePrice() throws Exception {
@@ -91,7 +91,7 @@ public class OlxOfferTest {
 		assertThat(offer.hasPhoto()).as("offer %s has no photo", offer.getUri()).isTrue();
 		assertThat(offer.getPhoto()).isNotNull();
 	}
-	
+
 	@Test
 	public void offerWithNoPhoto() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(
@@ -141,6 +141,33 @@ public class OlxOfferTest {
 		assertThat(offers).containsAll(offersInKoszalinOnly);
 	}
 
+	@Test
+	public void offerInPriceRange() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").minPrice(2).maxPrice(9).toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("[23456789]{1} zł( Do negocjacji)?"));
+	}
+
+	@Test
+	public void offerInMinimumRange() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").minPrice(0).maxPrice(1).toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo") || o.getPrice().matches("1 zł"));
+	}
+
+	@Test
+	public void offerForFree() throws Exception {
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("maskotka").minPrice(0).toUrl());
+
+		List<OlxOffer> offers = scrapper.getOffers();
+
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo"));
+	}
+
 	private Element getElement() throws IOException {
 		String tag = readFile(testName.getMethodName() + ".htm");
 		return Jsoup.parse(tag, "", Parser.xmlParser());
@@ -151,7 +178,7 @@ public class OlxOfferTest {
 		File file = new File(classLoader.getResource(name).getFile());
 		return new String(Files.readAllBytes(file.toPath()), "UTF-8");
 	}
-	
+
 	private Condition<OlxOffer> hasNoPhoto() {
 		return new Condition<OlxOffer>((o) -> !o.hasPhoto(), "has no photo");
 	}

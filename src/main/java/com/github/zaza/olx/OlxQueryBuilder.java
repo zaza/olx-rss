@@ -1,5 +1,6 @@
 package com.github.zaza.olx;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
@@ -7,6 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Range;
 
 import io.mikael.urlbuilder.UrlBuilder;
 
@@ -16,6 +20,7 @@ public class OlxQueryBuilder {
 	private boolean withPhotoOnly;
 	private String location;
 	private Radius radius;
+	private Range<Integer> price;
 
 	private OlxQueryBuilder(String query) {
 		this.query = query;
@@ -36,19 +41,45 @@ public class OlxQueryBuilder {
 	}
 
 	OlxQueryBuilder radius(Radius radius) {
-		checkState(location!= null, "Location must be provided first.");
+		checkState(location != null, "Location must be provided first.");
 		this.radius = radius;
 		return this;
 	}
 
+	OlxQueryBuilder minPrice(int minPrice) {
+		checkArgument(minPrice >= 0, "Min price must be 0 at least.");
+		if (price != null && price.hasUpperBound()) {
+			checkArgument(price.upperEndpoint() > minPrice, "Min price must be less than max price.");
+			this.price = Range.closed(minPrice, price.upperEndpoint());
+		} else {
+			this.price = Range.atLeast(minPrice);
+		}
+		return this;
+	}
+
+	OlxQueryBuilder maxPrice(int maxPrice) {
+		checkArgument(maxPrice >= 0, "Max price must be 0 at least.");
+		if (price != null && price.hasLowerBound()) {
+			checkArgument(price.lowerEndpoint() < maxPrice, "Max price must be more than max price.");
+			this.price = Range.closed(price.lowerEndpoint(), maxPrice);
+		} else {
+			this.price = Range.atMost(maxPrice);
+		}
+		return this;
+	}
+
 	URL toUrl() throws MalformedURLException {
-		UrlBuilder builder = UrlBuilder.empty().withScheme("https")
-				.withHost("www.olx.pl");
+		UrlBuilder builder = UrlBuilder.empty().withScheme("https").withHost("www.olx.pl");
 		builder = builder.withPath(getPath());
 		if (withPhotoOnly)
 			builder = builder.addParameter("search[photos]", "1");
 		if (radius != null)
 			builder = builder.addParameter("search[dist]", radius.toString());
+		if (price != null && price.hasLowerBound())
+			builder = builder.addParameter("search[filter_float_price:from]",
+					price.lowerEndpoint() == 0 ? "free" : price.lowerEndpoint().toString());
+		if (price != null && price.hasUpperBound() && price.upperEndpoint() > 0)
+			builder = builder.addParameter("search[filter_float_price:to]", price.upperEndpoint().toString());
 		return builder.toUrl();
 	}
 
@@ -71,13 +102,18 @@ public class OlxQueryBuilder {
 	}
 
 	private String deaccent(String input) {
-	    String nfdNormalizedString = Normalizer.normalize(input, Normalizer.Form.NFD); 
-	    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-	    return pattern.matcher(nfdNormalizedString).replaceAll("");
+		String nfdNormalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		return pattern.matcher(nfdNormalizedString).replaceAll("");
 	}
 
 	public String getDescription() {
 		return format("'%s'%s", query, withPhotoOnly ? " with photo" : "");
+	}
+
+	@VisibleForTesting
+	Range<Integer> getPrice() {
+		return price;
 	}
 
 }
