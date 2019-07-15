@@ -156,7 +156,7 @@ public class OlxOfferTest {
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
-		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo") || o.getPrice().matches("1 zł"));
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo") || o.getPrice().matches("1 zł( Do negocjacji)?"));
 	}
 
 	@Test
