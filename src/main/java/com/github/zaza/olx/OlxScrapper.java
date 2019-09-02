@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
 
 public class OlxScrapper {
 
-	private static final int FIVE_SECONDS = (int) TimeUnit.SECONDS.toMillis(5);
+	private static final int FIFTEEN_SECONDS = (int) TimeUnit.SECONDS.toMillis(15);
 
 	private URL url;
 
@@ -90,7 +90,7 @@ public class OlxScrapper {
 	private Document getDocument() throws IOException {
 		if (document == null)
 			System.out.println(url);
-		document = Jsoup.parse(url, FIVE_SECONDS);
+		document = Jsoup.parse(url, FIFTEEN_SECONDS);
 		return document;
 	}
 
