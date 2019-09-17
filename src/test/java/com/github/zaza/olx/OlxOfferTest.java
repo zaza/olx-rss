@@ -143,7 +143,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerInPriceRange() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").minPrice(2).maxPrice(9).toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("czesci opla").minPrice(2).maxPrice(9).toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
@@ -152,7 +152,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerInMinimumRange() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").minPrice(0).maxPrice(1).toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("czesci opla").minPrice(0).maxPrice(1).toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
