@@ -19,11 +19,13 @@ public class OlxRss {
 
 	public static void main(String[] args) {
 		port(Integer.valueOf(System.getenv("PORT")));
-		before(new TokenAuthenticationFilter(System.getenv("TOKEN"))); 
-		get("/rss", (req, res) -> new FeedWriter()
-				.write(new OlxClient(req).search()));
+		before(new TokenAuthenticationFilter(System.getenv("TOKEN")));
+		get("/rss", (req, res) -> {
+			res.type("application/rss+xml");
+			return new FeedWriter().write(new OlxClient(req).search());
+		});
 	}
-	
+
 	private static class TokenAuthenticationFilter extends FilterImpl {
 
 		private final String validToken;
@@ -46,6 +48,6 @@ public class OlxRss {
 				halt(401, "invalid token");
 			}
 		}
-	} 
+	}
 
 }
