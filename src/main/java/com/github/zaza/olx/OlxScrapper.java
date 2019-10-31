@@ -13,9 +13,13 @@ import java.util.concurrent.TimeUnit;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OlxScrapper {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(OlxScrapper.class);
+	
 	private static final int FIFTEEN_SECONDS = (int) TimeUnit.SECONDS.toMillis(15);
 
 	private URL url;
@@ -47,7 +51,7 @@ public class OlxScrapper {
 	public List<OlxOffer> getOffers() throws IOException {
 		if (!hasOffers()) {
 			// offers listed are not related to the query
-			System.out.println("Found no related offers.");
+			LOGGER.info("Found no related offers.");
 			return Collections.emptyList();
 		}
 		Elements elements = new Elements(getOffersCount());
@@ -59,7 +63,7 @@ public class OlxScrapper {
 			elements.addAll(getOfferElements());
 		}
 		while (hasNextPage()) {
-			System.out.println("Processing next page...");
+			LOGGER.debug("Processing next page...");
 			url = getNextPageUrl();
 			document = null;
 			elements.addAll(getOfferElements());
@@ -89,7 +93,7 @@ public class OlxScrapper {
 
 	private Document getDocument() throws IOException {
 		if (document == null)
-			System.out.println(url);
+			LOGGER.debug("Parsing document from {}", url);
 		document = Jsoup.parse(url, FIFTEEN_SECONDS);
 		return document;
 	}
