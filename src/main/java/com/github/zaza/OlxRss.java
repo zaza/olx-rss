@@ -8,7 +8,6 @@ import static spark.Spark.halt;
 import com.github.zaza.olx.OlxClient;
 import com.google.common.base.Strings;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import spark.FilterImpl;
 import spark.Request;
 import spark.Response;
@@ -19,9 +18,8 @@ public class OlxRss {
 	}
 
 	public static void main(String[] args) {
-		Dotenv dotenv = Dotenv.load();
-		port(Integer.valueOf(dotenv.get("PORT")));
-		before(new TokenAuthenticationFilter(dotenv.get("TOKEN"))); 
+		port(Integer.valueOf(System.getenv("PORT")));
+		before(new TokenAuthenticationFilter(System.getenv("TOKEN"))); 
 		get("/rss", (req, res) -> new FeedWriter()
 				.write(new OlxClient(req).search()));
 	}
