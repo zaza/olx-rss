@@ -19,7 +19,7 @@ public class OlxScrapperTest {
 	@Test
 	public void hasNoOffers() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("asdfghjkl").toUrl());
+				OlxQueryBuilder.query("foo bar").toUrl());
 		assertFalse(scrapper.hasOffers());
 		assertEquals(0, scrapper.getOffersCount());
 		assertEquals(0, scrapper.getOffers().size());
