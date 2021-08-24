@@ -88,7 +88,7 @@ public class OlxScrapper {
 
 	private Elements getNextPageElements() throws IOException {
 		return getDocument()
-				.select("a[class=link pageNextPrev {page:" + (page + 1) + "}");
+				.select("a[class=link pageNextPrev {page:" + (page + 1) + "}]");
 	}
 
 	private Document getDocument() throws IOException {
