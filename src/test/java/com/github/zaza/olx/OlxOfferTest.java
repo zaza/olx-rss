@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Locale;
 
 import org.assertj.core.api.Condition;
 import org.jsoup.Jsoup;
@@ -31,8 +32,7 @@ public class OlxOfferTest {
 		assertEquals("Przyjmę do pracy kierowce kat. C", offer.getTitle());
 		assertEquals("2 000 zł/mies.", offer.getPrice());
 		assertEquals(
-				URI.create(
-						"https://www.olx.pl/oferta/przyjme-do-pracy-kierowce-kat-c-CID4-IDkbKqa.html#e966dbc794"),
+				URI.create("https://www.olx.pl/oferta/przyjme-do-pracy-kierowce-kat-c-CID4-IDkbKqa.html#e966dbc794"),
 				offer.getUri());
 		assertEquals("Szczytno", offer.getCity());
 		assertNull(offer.getPhoto());
@@ -43,17 +43,14 @@ public class OlxOfferTest {
 	public void jobOfferWithPhoto() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
-		assertEquals("Przyjmę kierowce na busa miedzynarodowka",
-				offer.getTitle());
+		assertEquals("Przyjmę kierowce na busa miedzynarodowka", offer.getTitle());
 		assertEquals("", offer.getPrice());
-		assertEquals(
-				URI.create(
-						"https://www.olx.pl/oferta/przyjme-kierowce-na-busa-miedzynarodowka-CID619-IDlbjgm.html#e966dbc794"),
+		assertEquals(URI.create(
+				"https://www.olx.pl/oferta/przyjme-kierowce-na-busa-miedzynarodowka-CID619-IDlbjgm.html#e966dbc794"),
 				offer.getUri());
 		assertEquals("Zabrze", offer.getCity());
-		assertEquals(
-				URI.create(
-						"https://olxpl-ring05.akamaized.net/images_tablicapl/509502740_1_261x203_przyjme-kierowce-na-busa-miedzynarodowka-zabrze.jpg"),
+		assertEquals(URI.create(
+				"https://olxpl-ring05.akamaized.net/images_tablicapl/509502740_1_261x203_przyjme-kierowce-na-busa-miedzynarodowka-zabrze.jpg"),
 				offer.getPhoto());
 	}
 
@@ -62,29 +59,24 @@ public class OlxOfferTest {
 	public void offerNegotiablePrice() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
-		assertEquals("Sprzedam Opla Omegę Lpg",
-				offer.getTitle());
+		assertEquals("Sprzedam Opla Omegę Lpg", offer.getTitle());
 		assertEquals("5 500 zł Do negocjacji", offer.getPrice());
-		assertEquals(
-				URI.create(
-						"https://www.olx.pl/oferta/sprzedam-opla-omege-lpg-CID5-IDl7NDy.html#d3b98b0b80"),
+		assertEquals(URI.create("https://www.olx.pl/oferta/sprzedam-opla-omege-lpg-CID5-IDl7NDy.html#d3b98b0b80"),
 				offer.getUri());
 		assertEquals("Garcz", offer.getCity());
-		assertEquals(
-				URI.create(
-						"https://olxpl-ring09.akamaized.net/images_tablicapl/508204936_1_261x203_sprzedam-opla-omege-lpg-kartuzy_rev001.jpg"),
+		assertEquals(URI.create(
+				"https://olxpl-ring09.akamaized.net/images_tablicapl/508204936_1_261x203_sprzedam-opla-omege-lpg-kartuzy_rev001.jpg"),
 				offer.getPhoto());
 	}
 
 	@Test
 	public void offerWithPhoto() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("sprzedam opla").withPhotoOnly().toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").withPhotoOnly().toUrl());
 
 		OlxOffer offer = scrapper.getOffers().iterator().next();
 
 		assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
-		assertThat(offer.getTitle()).containsIgnoringCase("opla");
+		assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("opla", "opel");
 		assertThat(offer.getPrice()).matches("[ \\d]+ zł( Do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
@@ -94,8 +86,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerWithNoPhoto() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("sprzedam opla").toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
@@ -104,8 +95,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void noOfferInLocation() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("kamienica").location("Kurozwęcz").toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("kamienica").location("Kurozwęcz").toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
@@ -114,8 +104,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerInLocation() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(
-				OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
@@ -133,8 +122,9 @@ public class OlxOfferTest {
 
 		assertThat(offers).isNotEmpty();
 		assertThat(offers.size()).isEqualTo(scrapper.getOffersCount());
-		assertThat(offers).areAtLeastOne(new Condition<OlxOffer>(o -> !o.getCity().equals("Koszalin"), "city is not %s", "Koszalin"));
-		
+		assertThat(offers).areAtLeastOne(
+				new Condition<OlxOffer>(o -> !o.getCity().equals("Koszalin"), "city is not %s", "Koszalin"));
+
 		List<OlxOffer> offersInKoszalinOnly = new OlxScrapper(
 				OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl()).getOffers();
 		assertThat(offers.size()).isGreaterThan(offersInKoszalinOnly.size());
@@ -156,7 +146,8 @@ public class OlxOfferTest {
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
-		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo") || o.getPrice().matches("1 zł( Do negocjacji)?"));
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo")
+				|| o.getPrice().matches("1 zł( Do negocjacji)?") || o.getPrice().isEmpty());
 	}
 
 	@Test
