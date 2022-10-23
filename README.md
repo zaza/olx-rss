@@ -1,6 +1,6 @@
 # OLX scrapper and RSS feed generator
 
----
+[![Build and Deploy](https://github.com/zaza/olx-rss/actions/workflows/maven.yml/badge.svg)](https://github.com/zaza/olx-rss/actions/workflows/maven.yml)
 
 The tool provides fluent API to query polish version of OLX.
 
