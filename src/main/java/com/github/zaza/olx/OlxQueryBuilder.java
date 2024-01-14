@@ -1,18 +1,16 @@
 package com.github.zaza.olx;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static java.lang.String.format;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Range;
+import io.mikael.urlbuilder.UrlBuilder;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Range;
-
-import io.mikael.urlbuilder.UrlBuilder;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.lang.String.format;
 
 public class OlxQueryBuilder {
 
@@ -68,9 +66,12 @@ public class OlxQueryBuilder {
 		return this;
 	}
 
-	URL toUrl() throws MalformedURLException {
-		UrlBuilder builder = UrlBuilder.empty().withScheme("https").withHost("www.olx.pl");
-		builder = builder.withPath(getPath());
+	static UrlBuilder base() {
+		return UrlBuilder.empty().withScheme("https").withHost("www.olx.pl");
+	}
+
+	URL toUrl() {
+		UrlBuilder builder = base().withPath(getPath());
 		if (withPhotoOnly)
 			builder = builder.addParameter("search[photos]", "1");
 		if (radius != null)
@@ -85,7 +86,7 @@ public class OlxQueryBuilder {
 
 	private String getPath() {
 		StringBuilder sb = new StringBuilder();
-		// TODO: verify location
+		// TODO: verify location, issue #29
 		if (location != null) {
 			sb.append("/").append(deaccent(location));
 		}

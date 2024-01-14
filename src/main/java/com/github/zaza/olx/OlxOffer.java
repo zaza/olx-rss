@@ -17,36 +17,31 @@ public class OlxOffer {
 	}
 
 	public String getTitle() {
-		return getCell(0, 1).select("a[href]").first().text();
+		return element.select("h6").first().text();
 	}
 
 	public String getPrice() {
-		return getCell(0, 2).text();
+		return element.select("p[data-testid=ad-price]").first().text();
 	}
 
 	public URI getUri() {
-		return URI.create(getCell(0, 1).select("a[href]").first().attr("href"));
+		String href = element.select("a[href]").first().attr("href");
+		return URI.create(OlxQueryBuilder.base().withPath(href).toUrl().toString());
 	}
 
 	public String getCity() {
-		return getCell(1, 0).select("p > small").first().text();
+		String locationDate = element.select("p[data-testid=location-date]").first().text();
+		// e.g. "Łapanów - 26 grudnia 2023"
+		return locationDate.substring(0, locationDate.indexOf(" - "));
 	}
 
 	public URI getPhoto() {
-		Elements images = getCell(0, 0).select("img");
-		if (images.isEmpty())
-			return null;
-		return URI.create(images.first().attr("src"));
+		String src = element.select("img[src]").first().attr("src");
+		return URI.create(src);
 	}
 
 	public boolean hasPhoto() {
 		return getPhoto() != null;
-	}
-
-	Element getCell(int row, int column) {
-		Element table = element.select("table").first();
-		Element tr = table.select("tbody > tr").get(row);
-		return tr.select("td").get(column);
 	}
 
 	@Override
