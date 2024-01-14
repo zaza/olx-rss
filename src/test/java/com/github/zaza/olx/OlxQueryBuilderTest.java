@@ -47,7 +47,7 @@ public class OlxQueryBuilderTest {
 
 	@Test
 	public void minPriceMustLessThenMaxPrice() {
-		OlxQueryBuilder builder = OlxQueryBuilder.query("foo").minPrice(2);
+		OlxQueryBuilder builder = OlxQueryBuilder.query("foo").maxPrice(1);
 
 		assertThatThrownBy(() -> builder.minPrice(2))
 				.isInstanceOf(IllegalArgumentException.class).hasMessage("Min price must be less than max price.");
