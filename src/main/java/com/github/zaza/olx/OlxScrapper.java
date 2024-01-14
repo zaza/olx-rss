@@ -1,26 +1,29 @@
 package com.github.zaza.olx;
 
-import static java.util.stream.Collectors.toList;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.stream.Collectors.toList;
 
 public class OlxScrapper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OlxScrapper.class);
 	
 	private static final int FIFTEEN_SECONDS = (int) TimeUnit.SECONDS.toMillis(15);
+	private static final Pattern PATTERN_FOUND_N_OFFERS = Pattern.compile("Znaleźliśmy (ponad )?(\\d+) ogłosze(ń|nia)");
 
 	private URL url;
 
@@ -28,24 +31,24 @@ public class OlxScrapper {
 
 	private int page;
 
-	public OlxScrapper(URL url) throws MalformedURLException {
+	public OlxScrapper(URL url) {
 		this.url = url;
 		this.page = 1;
 	}
 
 	public boolean hasOffers() throws IOException {
-		Elements elements = getDocument().select("div#topLink");
-		return !elements.isEmpty() && elements.first().hasText();
+		return getOffersCount() > 0;
 	}
 
 	public int getOffersCount() throws IOException {
-		if (!hasOffers())
-			return 0;
-		Elements spans = getDocument()
-				.select("div#topLink > div > ul > li.hidden > span");
-		return spans.stream()
-				.mapToInt(s -> Integer.parseInt(s.text().replaceAll(" ", "")))
-				.sum();
+		Element element = getDocument().selectFirst("span[data-testid=total-count]");
+		if (element == null) return 0;
+		String text = element.text();
+		Matcher matcher = PATTERN_FOUND_N_OFFERS.matcher(text);
+		if (matcher.matches()) {
+			return Integer.parseInt(matcher.group(2));
+		}
+		return 0;
 	}
 
 	public List<OlxOffer> getOffers() throws IOException {
@@ -73,8 +76,7 @@ public class OlxScrapper {
 	}
 
 	private Elements getOfferElements() throws IOException {
-		return getDocument()
-				.select("table#offers_table > tbody > tr > td > div > table");
+		return getDocument().select("div[data-testid=listing-grid] > div[data-testid=l-card]");
 	}
 
 	private boolean hasNextPage() throws IOException {
@@ -82,13 +84,14 @@ public class OlxScrapper {
 	}
 
 	private URL getNextPageUrl() throws IOException {
-		String href = getNextPageElements().get(0).attr("href");
-		return URI.create(href).toURL();
+		String href = getNextPageElements().first().attr("href");
+		String base = OlxQueryBuilder.base().toUrl().toString();
+		return URI.create(base + href).toURL();
 	}
 
 	private Elements getNextPageElements() throws IOException {
 		return getDocument()
-				.select("a[class=link pageNextPrev {page:" + (page + 1) + "}]");
+				.select("a[data-testid=pagination-link-" + (page + 1) + "]");
 	}
 
 	private Document getDocument() throws IOException {

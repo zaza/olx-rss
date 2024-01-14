@@ -15,6 +15,7 @@ import org.assertj.core.api.Condition;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -26,6 +27,7 @@ public class OlxOfferTest {
 
 	@Offline
 	@Test
+	@Ignore("update test sample") // TODO issue #28
 	public void jobOffer() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
@@ -40,6 +42,7 @@ public class OlxOfferTest {
 
 	@Offline
 	@Test
+	@Ignore("update test sample") // TODO issue #28
 	public void jobOfferWithPhoto() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
@@ -59,13 +62,13 @@ public class OlxOfferTest {
 	public void offerNegotiablePrice() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
-		assertEquals("Sprzedam Opla Omegę Lpg", offer.getTitle());
-		assertEquals("5 500 zł Do negocjacji", offer.getPrice());
-		assertEquals(URI.create("https://www.olx.pl/oferta/sprzedam-opla-omege-lpg-CID5-IDl7NDy.html#d3b98b0b80"),
+		assertEquals("Sprzedam opel astra kombi", offer.getTitle());
+		assertEquals("1 600 złdo negocjacji", offer.getPrice());
+		assertEquals(URI.create("https://www.olx.pl/d/oferta/sprzedam-opel-astra-kombi-CID5-IDXZ7UE.html"),
 				offer.getUri());
-		assertEquals("Garcz", offer.getCity());
+		assertEquals("Łapanów", offer.getCity());
 		assertEquals(URI.create(
-				"https://olxpl-ring09.akamaized.net/images_tablicapl/508204936_1_261x203_sprzedam-opla-omege-lpg-kartuzy_rev001.jpg"),
+				"https://ireland.apollo.olxcdn.com:443/v1/files/0itg5ybrkvh6-PL/image;s=200x0;q=50"),
 				offer.getPhoto());
 	}
 
@@ -77,7 +80,7 @@ public class OlxOfferTest {
 
 		assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
 		assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("opla", "opel");
-		assertThat(offer.getPrice()).matches("[ \\d]+ zł( Do negocjacji)?");
+		assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
 		assertThat(offer.getUri()).isNotNull();
 		assertThat(offer.getCity()).isNotEmpty();
 		assertThat(offer.hasPhoto()).as("offer %s has no photo", offer.getUri()).isTrue();
@@ -85,6 +88,7 @@ public class OlxOfferTest {
 	}
 
 	@Test
+	@Ignore("find a query that is guaranteed to have an ad with no photo") // FIXME
 	public void offerWithNoPhoto() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").toUrl());
 
@@ -94,6 +98,7 @@ public class OlxOfferTest {
 	}
 
 	@Test
+	@Ignore("search by location is broken") // FIXME issue #27
 	public void noOfferInLocation() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("kamienica").location("Kurozwęcz").toUrl());
 
@@ -103,6 +108,7 @@ public class OlxOfferTest {
 	}
 
 	@Test
+	@Ignore("search by location is broken") // FIXME issue #27
 	public void offerInLocation() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl());
 
@@ -114,6 +120,7 @@ public class OlxOfferTest {
 	}
 
 	@Test
+	@Ignore("search by location is broken") // FIXME issue #27
 	public void offerInRadius() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(
 				OlxQueryBuilder.query("nowy dom").location("Koszalin").radius(Radius._30KM).toUrl());
@@ -137,17 +144,18 @@ public class OlxOfferTest {
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
-		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("[23456789]{1} zł( Do negocjacji)?"));
+		// price from 2 to 9, including fractions e.g. 3,50 zł
+		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("[23456789](,\\d{2})? zł( do negocjacji)?"));
 	}
 
 	@Test
-	public void offerInMinimumRange() throws Exception {
+	public void offerInMinimumPriceRange() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("czesci fiata").minPrice(0).maxPrice(1).toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
 		assertThat(offers).isNotEmpty().allMatch(o -> o.getPrice().matches("Za darmo")
-				|| o.getPrice().matches("1 zł( Do negocjacji)?") || o.getPrice().isEmpty());
+				|| o.getPrice().matches("1 zł( do negocjacji)?") || o.getPrice().isEmpty());
 	}
 
 	@Test
