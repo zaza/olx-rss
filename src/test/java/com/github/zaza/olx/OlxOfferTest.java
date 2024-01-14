@@ -7,11 +7,13 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Locale;
 
 import org.assertj.core.api.Condition;
+import org.assertj.core.api.SoftAssertions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
@@ -74,17 +76,19 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerWithPhoto() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam opla").withPhotoOnly().toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("sprzedam konia").withPhotoOnly().toUrl());
 
 		OlxOffer offer = scrapper.getOffers().iterator().next();
 
-		assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
-		assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("opla", "opel");
-		assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
-		assertThat(offer.getUri()).isNotNull();
-		assertThat(offer.getCity()).isNotEmpty();
-		assertThat(offer.hasPhoto()).as("offer %s has no photo", offer.getUri()).isTrue();
-		assertThat(offer.getPhoto()).isNotNull();
+		SoftAssertions softly = new SoftAssertions();
+		softly.assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
+		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "ogier", "klacz");
+		softly.assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
+		softly.assertThat(offer.getUri()).isNotNull();
+		softly.assertThat(offer.getCity()).isNotEmpty();
+		softly.assertThat(offer.hasPhoto()).as("offer %s has no photo", offer.getUri()).isTrue();
+		softly.assertThat(offer.getPhoto()).isNotNull();
+		softly.assertAll();
 	}
 
 	@Test
@@ -114,9 +118,10 @@ public class OlxOfferTest {
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
-		assertThat(offers).isNotEmpty();
-		assertThat(offers.size()).isEqualTo(scrapper.getOffersCount());
-		assertThat(offers).allMatch(o -> o.getCity().equals("Koszalin"));
+		assertThat(offers)
+				.isNotEmpty()
+				.hasSize(scrapper.getOffersCount())
+				.allMatch(o -> o.getCity().equals("Koszalin"));
 	}
 
 	@Test
@@ -127,15 +132,15 @@ public class OlxOfferTest {
 
 		List<OlxOffer> offers = scrapper.getOffers();
 
-		assertThat(offers).isNotEmpty();
-		assertThat(offers.size()).isEqualTo(scrapper.getOffersCount());
-		assertThat(offers).areAtLeastOne(
-				new Condition<OlxOffer>(o -> !o.getCity().equals("Koszalin"), "city is not %s", "Koszalin"));
+		assertThat(offers)
+				.isNotEmpty()
+				.hasSize(scrapper.getOffersCount())
+				.areAtLeastOne(
+						new Condition<>(o -> !o.getCity().equals("Koszalin"), "city is not %s", "Koszalin"));
 
 		List<OlxOffer> offersInKoszalinOnly = new OlxScrapper(
 				OlxQueryBuilder.query("nowy dom").location("Koszalin").toUrl()).getOffers();
-		assertThat(offers.size()).isGreaterThan(offersInKoszalinOnly.size());
-		assertThat(offers).containsAll(offersInKoszalinOnly);
+		assertThat(offers).hasSizeGreaterThan(offersInKoszalinOnly.size()).containsAll(offersInKoszalinOnly);
 	}
 
 	@Test
@@ -175,10 +180,10 @@ public class OlxOfferTest {
 	private String readFile(String name) throws IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource(name).getFile());
-		return new String(Files.readAllBytes(file.toPath()), "UTF-8");
+		return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 	}
 
 	private Condition<OlxOffer> hasNoPhoto() {
-		return new Condition<OlxOffer>((o) -> !o.hasPhoto(), "has no photo");
+		return new Condition<>((o) -> !o.hasPhoto(), "has no photo");
 	}
 }
