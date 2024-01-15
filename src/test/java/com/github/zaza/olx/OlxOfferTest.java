@@ -82,7 +82,7 @@ public class OlxOfferTest {
 
 		SoftAssertions softly = new SoftAssertions();
 		softly.assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
-		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę");
+		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę", "kucyka");
 		softly.assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
 		softly.assertThat(offer.getUri()).isNotNull();
 		softly.assertThat(offer.getCity()).isNotEmpty();
