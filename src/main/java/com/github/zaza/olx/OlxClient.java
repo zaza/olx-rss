@@ -1,30 +1,26 @@
 package com.github.zaza.olx;
 
+import lombok.extern.slf4j.Slf4j;
+import spark.Request;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import spark.Request;
-
+@Slf4j
 public class OlxClient {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OlxClient.class);
-	
-	private OlxQueryBuilder builder;
+	private final OlxQueryBuilder builder;
 
-	public OlxClient(Request req) throws MalformedURLException {
+	public OlxClient(Request req) {
 		this.builder = OlxQueryBuilder.query(req.queryParams("string"));
 	}
 
 	public SearchResult search() throws IOException {
 		URL url = builder.toUrl();
-		LOGGER.info("Retrieving offers for URL: {}", url);
+		log.info("Retrieving offers for URL: {}", url);
 		List<OlxOffer> offers = new OlxScrapper(url).getOffers();
-		LOGGER.info("Found {} offers.", offers.size());
+		log.info("Found {} offers.", offers.size());
 		return new SearchResult(url, builder.getDescription(), offers);
 	}
 

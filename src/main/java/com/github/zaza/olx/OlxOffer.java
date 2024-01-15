@@ -1,20 +1,16 @@
 package com.github.zaza.olx;
 
-import java.net.URI;
-
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import lombok.RequiredArgsConstructor;
+import org.jsoup.nodes.Element;
 
+import java.net.URI;
+
+@RequiredArgsConstructor
 public class OlxOffer {
 
-	private Element element;
-
-	public OlxOffer(Element element) {
-		this.element = element;
-	}
+	private final Element element;
 
 	public String getTitle() {
 		return element.select("h6").first().text();

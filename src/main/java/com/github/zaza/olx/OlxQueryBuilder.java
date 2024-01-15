@@ -3,6 +3,7 @@ package com.github.zaza.olx;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Range;
 import io.mikael.urlbuilder.UrlBuilder;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URL;
 import java.text.Normalizer;
@@ -12,17 +13,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.lang.String.format;
 
+@RequiredArgsConstructor
 public class OlxQueryBuilder {
 
-	private String query;
+	private final String query;
 	private boolean withPhotoOnly;
 	private String location;
 	private Radius radius;
 	private Range<Integer> price;
-
-	private OlxQueryBuilder(String query) {
-		this.query = query;
-	}
 
 	static OlxQueryBuilder query(String query) {
 		return new OlxQueryBuilder(query);

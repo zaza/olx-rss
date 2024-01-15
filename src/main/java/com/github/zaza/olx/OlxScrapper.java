@@ -1,11 +1,10 @@
 package com.github.zaza.olx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,10 +17,9 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 public class OlxScrapper {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OlxScrapper.class);
-	
 	private static final int FIFTEEN_SECONDS = (int) TimeUnit.SECONDS.toMillis(15);
 	private static final Pattern PATTERN_FOUND_N_OFFERS = Pattern.compile("Znaleźliśmy (ponad )?(\\d+) ogłosze(ń|nia)");
 
@@ -54,7 +52,7 @@ public class OlxScrapper {
 	public List<OlxOffer> getOffers() throws IOException {
 		if (!hasOffers()) {
 			// offers listed are not related to the query
-			LOGGER.info("Found no related offers.");
+			log.info("Found no related offers.");
 			return Collections.emptyList();
 		}
 		Elements elements = new Elements(getOffersCount());
@@ -66,7 +64,7 @@ public class OlxScrapper {
 			elements.addAll(getOfferElements());
 		}
 		while (hasNextPage()) {
-			LOGGER.debug("Processing next page...");
+			log.debug("Processing next page...");
 			url = getNextPageUrl();
 			document = null;
 			elements.addAll(getOfferElements());
@@ -96,7 +94,7 @@ public class OlxScrapper {
 
 	private Document getDocument() throws IOException {
 		if (document == null)
-			LOGGER.debug("Parsing document from {}", url);
+			log.debug("Parsing document from {}", url);
 		document = Jsoup.parse(url, FIFTEEN_SECONDS);
 		return document;
 	}

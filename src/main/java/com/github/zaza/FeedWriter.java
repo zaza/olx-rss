@@ -30,7 +30,7 @@ public class FeedWriter {
 		feed.setFeedType("rss_2.0");
 
 		feed.setTitle(format("OLX.pl \"%s\"", result.getFilterDescription()));
-		feed.setLink(result.getQueryUrl());
+		feed.setLink(result.getUrl().toString());
 		feed.setDescription("Ogłoszenia spełniające Twoje kryteria wyszukiwania");
 
 		SyndImage image = new SyndImageImpl();
@@ -39,7 +39,7 @@ public class FeedWriter {
 		image.setLink("https://www.olx.pl");
 		feed.setImage(image);
 
-		List<SyndEntry> entries = result.getItems().stream().map(i -> feedEntry(i)).collect(Collectors.toList());
+		List<SyndEntry> entries = result.getItems().stream().map(this::feedEntry).collect(Collectors.toList());
 		feed.setEntries(entries);
 		return write(feed);
 	}
