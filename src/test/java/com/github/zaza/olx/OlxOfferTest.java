@@ -64,14 +64,23 @@ public class OlxOfferTest {
 	public void offerNegotiablePrice() throws Exception {
 		OlxOffer offer = new OlxOffer(getElement());
 
-		assertEquals("Sprzedam opel astra kombi", offer.getTitle());
-		assertEquals("1 600 złdo negocjacji", offer.getPrice());
-		assertEquals(URI.create("https://www.olx.pl/d/oferta/sprzedam-opel-astra-kombi-CID5-IDXZ7UE.html"),
-				offer.getUri());
-		assertEquals("Łapanów", offer.getCity());
-		assertEquals(URI.create(
-				"https://ireland.apollo.olxcdn.com:443/v1/files/0itg5ybrkvh6-PL/image;s=200x0;q=50"),
-				offer.getPhoto());
+		assertThat(offer.getTitle()).isEqualTo("Sprzedam Opel AstraJ");
+		assertThat(offer.getPrice()).isEqualTo("18 900 złdo negocjacji");
+		assertThat(offer.getUri()).asString().isEqualTo("https://www.olx.pl/d/oferta/sprzedam-opel-astraj-CID5-ID13N7Uu.html");
+		assertThat(offer.getCity()).isEqualTo("Dąbrówka-Ług");
+		assertThat(offer.getPhoto()).hasHost("ireland.apollo.olxcdn.com");
+	}
+
+	@Offline
+	@Test
+	public void offerFromOtomoto() throws Exception {
+		OlxOffer offer = new OlxOffer(getElement());
+
+		assertThat(offer.getTitle()).isEqualTo("Opel Astra Sprzedam");
+		assertThat(offer.getPrice()).isEqualTo("4 900 zł");
+		assertThat(offer.getUri()).asString().isEqualTo("https://www.otomoto.pl/osobowe/oferta/opel-astra-sprzedam-ID6GZojD.html");
+		assertThat(offer.getCity()).isEqualTo("Strzelce Krajeńskie");
+		assertThat(offer.getPhoto()).hasHost("ireland.apollo.olxcdn.com");
 	}
 
 	@Test
@@ -82,7 +91,7 @@ public class OlxOfferTest {
 
 		SoftAssertions softly = new SoftAssertions();
 		softly.assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
-		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę", "kucyka");
+		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę", "kucyka", "kuca");
 		softly.assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
 		softly.assertThat(offer.getUri()).isNotNull();
 		softly.assertThat(offer.getCity()).isNotEmpty();
@@ -155,7 +164,7 @@ public class OlxOfferTest {
 
 	@Test
 	public void offerInMinimumPriceRange() throws Exception {
-		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("czesci fiata").minPrice(0).maxPrice(1).toUrl());
+		OlxScrapper scrapper = new OlxScrapper(OlxQueryBuilder.query("maskotka").minPrice(0).maxPrice(1).toUrl());
 
 		List<OlxOffer> offers = scrapper.getOffers();
 

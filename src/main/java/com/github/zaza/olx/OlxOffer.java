@@ -13,7 +13,7 @@ public class OlxOffer {
 	private final Element element;
 
 	public String getTitle() {
-		return element.select("h6").first().text();
+		return element.select("h4").first().text();
 	}
 
 	public String getPrice() {
@@ -22,6 +22,9 @@ public class OlxOffer {
 
 	public URI getUri() {
 		String href = element.select("a[href]").first().attr("href");
+		URI uri = URI.create(href);
+		if (uri.isAbsolute())
+			return uri;
 		return URI.create(OlxQueryBuilder.base().withPath(href).toUrl().toString());
 	}
 
