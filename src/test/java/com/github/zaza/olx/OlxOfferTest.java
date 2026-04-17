@@ -65,7 +65,7 @@ public class OlxOfferTest {
 		OlxOffer offer = new OlxOffer(getElement());
 
 		assertThat(offer.getTitle()).isEqualTo("Sprzedam Opel AstraJ");
-		assertThat(offer.getPrice()).isEqualTo("18 900 złdo negocjacji");
+		assertThat(offer.getPrice()).isEqualTo("18 900 zł do negocjacji");
 		assertThat(offer.getUri()).asString().isEqualTo("https://www.olx.pl/d/oferta/sprzedam-opel-astraj-CID5-ID13N7Uu.html");
 		assertThat(offer.getCity()).isEqualTo("Dąbrówka-Ług");
 		assertThat(offer.getPhoto()).hasHost("ireland.apollo.olxcdn.com");
@@ -91,7 +91,7 @@ public class OlxOfferTest {
 
 		SoftAssertions softly = new SoftAssertions();
 		softly.assertThat(offer.getTitle()).containsIgnoringCase("sprzedam");
-		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę", "kucyka", "kuca");
+		softly.assertThat(offer.getTitle().toLowerCase(Locale.US)).containsAnyOf("konia", "koni", "ogier", "klacz", "źrebkę", "kucyka", "kuca", "wałach");
 		softly.assertThat(offer.getPrice()).matches("[ \\d]+ zł( do negocjacji)?");
 		softly.assertThat(offer.getUri()).isNotNull();
 		softly.assertThat(offer.getCity()).isNotEmpty();

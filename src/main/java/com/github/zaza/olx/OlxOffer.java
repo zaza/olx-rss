@@ -17,7 +17,8 @@ public class OlxOffer {
 	}
 
 	public String getPrice() {
-		return element.select("p[data-testid=ad-price]").first().text();
+		return element.select("p[data-testid=ad-price]").first().text()
+				.replace("złdo negocjacji", "zł do negocjacji");
 	}
 
 	public URI getUri() {

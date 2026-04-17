@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class OlxScrapperTest {
@@ -16,6 +17,7 @@ public class OlxScrapperTest {
 		assertHasOffers("kierowce przyjme");
 	}
 
+	@Ignore("OLX always returns fallback suggestions — no query yields zero results. Revisit with canned HTML fixture.")
 	@Test
 	public void hasNoOffers() throws Exception {
 		OlxScrapper scrapper = new OlxScrapper(
