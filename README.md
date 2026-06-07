@@ -1,4 +1,8 @@
-# OLX scrapper and RSS feed generator
+# OLX scraper and RSS feed generator
+
+🪦 Archived in favour of [olx-cli](https://github.com/zaza/olx-cli).
+
+---
 
 [![Build and Deploy](https://github.com/zaza/olx-rss/actions/workflows/maven.yml/badge.svg)](https://github.com/zaza/olx-rss/actions/workflows/maven.yml)
 
